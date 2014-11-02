@@ -16,7 +16,7 @@ class CreateUserModel {
 		return true;
 	}
 	
-	private function ifExists($userData){
+	public function ifExists($userData){
 		if(@file('Users/' . $userData[self::$username] . '.txt')){
 			return true;
 		}

@@ -21,9 +21,11 @@ class LoginController {
 	private $userValid;
 	private $userName;
 	private $sessionArray;
+	private $showRegisterOption = true; //Ändra till false så försvinner alternativet att kunna registrera sig
+	
+	//private $showRegisterLink;
 	
 	//Meddelanden till användaren efter validering och händelser
-	private static $messageCookie = "Message";
 	private static $notCookieMessage = "Felaktig information i cookie";
 	private static $notValidMessage = "Felaktigt användarnamn eller lösenord";
 	private static $savedSessionMessage = "Inloggning lyckades och vi kommer ihåg dig nästa gång";
@@ -38,18 +40,22 @@ class LoginController {
 	}
 
 	public function doLogin() {
-			
+		//Ställ in om registrera-länk ska finnas
+		if($this->showRegisterOption === true){
+			$this->loginView->setShowRegisterLink();
+		}
+		
 		//Kontrollera om användaren är inloggad
-		if($this->checkIfUserIsLoggedIn() === false){
+		if($this->checkIfUserIsLoggedIn()){
 			$this->isLoggedIn = FALSE;
 		}
-				
+			///*$this->showRegisterOption === true && */	/*&& $this->registerSuccess === false*/
 		//Kolla om användaren vill registrera ny användare
-		if($this->loginView->didUserPressCreateNew()){
-			$createUserView = $this->createUser->doRegister();
-			if($createUserView != false){	
-				return $createUserView;
-			}
+		if($this->loginView->didUserPressCreateNew() === true && $this->showRegisterOption === true){
+			return $this->createUser->doRegister();
+		}
+		else{
+			$this->isLoggedIn = FALSE;
 		}
 				
 		while($this->isLoggedIn === FALSE){
@@ -69,10 +75,25 @@ class LoginController {
 				}
 			}
 			else{
+				//$this->registerSuccess = false;
 				return $this->loginView->showLogin($this->textMessage);
 			}
 		}
 		return $this->doLogout();
+	}
+	
+	private function didUserWantToRegister(){
+		//$createUserView = 
+		return $this->createUser->doRegister();
+			/*if(is_string($createUserView)){	
+				return $createUserView();
+			}
+			else{
+				$this->textMessage = $createUserView['message'];
+				$this->userName = $createUserView['name'];
+				$this->isLoggedIn = FALSE;
+				return $this->loginView->showLogin($this->textMessage);
+			}*/
 	}
 	
 	private function setToLogout(){

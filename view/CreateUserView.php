@@ -2,6 +2,8 @@
 
 namespace view;
 
+require_once("./view/CookieStorage.php");
+
 class CreateUserView {
 	private $cookies;
 	private $errorMessage = "";
@@ -22,8 +24,8 @@ class CreateUserView {
 	private static $passwordToManyMessage = "Lösenorden har för många tecken. Max 20 tecken";
 	
 		
-	public function __construct(CookieStorage $cookies) {
-		$this->cookies = $cookies;
+	public function __construct() {
+		$this->cookies = new \view\CookieStorage();
 	}
 	
 	public function didUserPressRegister(){
@@ -53,7 +55,7 @@ class CreateUserView {
 	}
 	
 	public function didUserPressGoBack(){
-		if(key($_GET) === self::$register){
+		if(key($_GET) === '?'){
 			return true;
 		}
 		return false;

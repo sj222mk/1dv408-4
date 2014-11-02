@@ -5,6 +5,7 @@ namespace view;
 class LoginView {
 	private $cookies;
 	private $errorMessage = "";
+	private $showRegisterLink = false; 
 	private static $messageCookie = "Message";
 	private $username = "";
 	private static $userID = 'userID';
@@ -14,6 +15,10 @@ class LoginView {
 	
 	public function __construct(CookieStorage $cookies) {
 		$this->cookies = $cookies;
+	}
+	
+	public function setShowRegisterLink(){
+		$this->showRegisterLink = true;	
 	}
 	
 	public function didUserPressCreateNew(){
@@ -74,24 +79,22 @@ class LoginView {
 			$userMessage = $this->cookies->loadMessage(self::$messageCookie); 
 		}
 		
+		if($userMessage != self::$outLoggedMessage){
+			$this->cookies->save(self::$messageCookie, $this->errorMessage);
+		}
+		
 		return $userMessage;
 	}
 	
 	public function showLogin($message) {
 		$this->errorMessage = $this->setNewestErrorMessage($message);
-		if($this->errorMessage != self::$outLoggedMessage){
-			$this->cookies->save(self::$messageCookie, $this->errorMessage);
-		}
 		
+		$registerLink = $this->showRegister();
+				
 		$ret = "<header>
 					<h2>Ej inloggad<h2> 
 				</header>
-				<main>
-					<article>
-						<form method='post'>
-							<p><a href='?register' >Registrera ny användare</a></p>
-						</form>
-					</article>
+					$registerLink
 					<article>
 						<fieldset>
 							<form method='post'>
@@ -106,9 +109,23 @@ class LoginView {
 							<button type='submit'name='login'>Logga in</button>
 							</form>
 						</fieldset>
-					</article>
-				</main>";
+					</article>";
 		
 		return $ret;
+	}
+
+	private function showRegister(){
+		if($this->showRegisterLink === true){
+			$ret = "<article>
+						<form method='post'>
+							<p><a href='?register'>Registrera ny användare</a></p>
+						</form>
+					</article>";
+			
+			return $ret;
 		}
+		else{
+			return "";
+		}
+	}
 }
