@@ -10,10 +10,11 @@ class CreateUserModel {
 	}
 	
 	public function saveUser($userData){
+		$user = $userData[self::$username];
 		if($this->saveNewUser($userData) === true){
-			
+			return $user;
 		}
-		return true;
+		return false;
 	}
 	
 	public function ifExists($userData){

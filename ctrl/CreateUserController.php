@@ -5,7 +5,7 @@ namespace controller;
 require_once("./model/CreateUserModel.php");
 require_once("./view/CreateUserView.php");
 require_once("./view/LoginView.php");
-//require_once("./view/CookieStorage.php");
+require_once("./view/CookieStorage.php");
 
 class CreateUserController {
 	private $loginView;	
@@ -15,6 +15,7 @@ class CreateUserController {
 	private $createUserView;
 	private $userMessage = "";
 	private $doRegister = false;
+	private $username = "";
 	
 	private static $messageCookie = "Message";
 	private static $savedUserMessage = "Användaren är sparad";
@@ -30,25 +31,24 @@ class CreateUserController {
 	}	
 	
 	public function doRegister(){
-		//Kollar om användaren vill registrera sig. 
-		if($this->createUserView->didUserPressGoBack()){
-			$this->userMessage = "";
-			$this->cookies->remove(self::$messageCookie);
-			$this->doRegister = false;
-		}
-		else{
-			$this->doRegister = true;
-		}
+		$user;
+		$userdata;
+			
+		//Kollar om användaren ångrar sig 
+		$this->didUserRegret();
 		
+		//Själva registreringen av ny användare
 		while($this->doRegister === true){	
 			if($this->createUserView->didUserPressRegister()){
 				$userData = $this->createUserView->didUserFillFormCorrectly(); //Kontroll av ifyllda uppgifter
 				if($userData != false){
 					if($this->userModel->ifExists($userData) === false){ //Kontroll om användarnamnet är upptaget
-						if($this->userModel->saveUser($userData)){
+						$user = $this->userModel->saveUser($userData);
+						if($user != false){
+							$this->username = $user;
 							$this->userMessage = self::$savedUserMessage; //Sätter meddelande att användaren har sparats
 							$this->doRegister = false;
-							return $this->loginView->showLogin($this->userMessage);
+							return $this->login();
 						}
 						else{
 							$this->userMessage = self::$notSavedMessage; //Sätter meddelande att användaren inte sparades
@@ -59,10 +59,43 @@ class CreateUserController {
 					}		
 				}
 			}	
-			return $this->createUserView->showCreateUser($this->userMessage);
+			return $this->show();
 		}
 		
 		return $this->loginView->showLogin($this->userMessage);
+	}
+	
+	private function show(){
+		if($this->userMessage != ""){
+			$this->createUserView->setUserMessage($this->userMessage);
+		}
+		if($this->username != ""){
+			$this->createUserView->setUsername($this->userName);
+		}
+		$this->textMessage = "";
+		return $this->createUserView->showCreateUser($this->userMessage);
+	}
+	
+	private function login(){
+		if($this->userMessage != ""){
+			$this->loginView->setUserMessage($this->userMessage);
+		}
+		if($this->username != ""){
+			$this->loginView->setUsername($this->username);
+		}
+		$this->textMessage = "";
+		return $this->loginView->showLogin();
+	}
+	
+	private function didUserRegret(){
+		if($this->createUserView->didUserPressGoBack()){
+			$this->userMessage = "";
+			$this->cookies->remove(self::$messageCookie);
+			$this->doRegister = false;
+		}
+		else{
+			$this->doRegister = true;
+		}
 	}
 }
 

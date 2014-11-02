@@ -4,8 +4,8 @@ namespace view;
 
 class LoginView {
 	private $cookies;
-	private $errorMessage = "";
-	private $showRegisterLink = false; 
+	private $userMessage = "";
+	private $showRegisterLink = true; 
 	private static $messageCookie = "Message";
 	private $username = "";
 	private static $userID = 'userID';
@@ -19,6 +19,14 @@ class LoginView {
 	
 	public function setShowRegisterLink(){
 		$this->showRegisterLink = true;	
+	}
+	
+	public function setUserMessage($message){
+		$this->userMessage = $message;
+	}
+	
+	public function setUsername($name){
+		$this->username = $name;
 	}
 	
 	public function didUserPressCreateNew(){
@@ -40,12 +48,12 @@ class LoginView {
 			else{
 				if($_POST[self::$userID] === ""){
 					$this->username = $_POST[self::$userID];
-					$this->errorMessage = 'Användarnamn saknas';
+					$this->userMessage = 'Användarnamn saknas';
 				}
 				else{
-					$this->errorMessage = 'Lösenord saknas';
+					$this->userMessage = 'Lösenord saknas';
 				}
-			$this->cookies->save(self::$messageCookie, $this->errorMessage);
+			$this->cookies->save(self::$messageCookie, $this->userMessage);
 			}
 		return false;
 		}
@@ -65,29 +73,22 @@ class LoginView {
 		}
 	 }
 	 
-	//Kontroll av mest aktuellt felmeddelande (vissa sätts av controllern, vissa av vyn - om de saknas kollas cookies!)
-	private function setNewestErrorMessage($message){
-		$userMessage = "";
+	//Kontroll av mest aktuellt felmeddelande 
+	private function setNewestUserMessage(){
 		
-		if($message != ""){
-			$userMessage = $message;
-		}
-		elseif($this->errorMessage != ""){
-			$userMessage = $this->errorMessage;	
-		}
-		else{
-			$userMessage = $this->cookies->loadMessage(self::$messageCookie); 
+		if($this->userMessage === ""){
+			$this->userMessage = $this->cookies->loadMessage(self::$messageCookie);
 		}
 		
-		if($userMessage != self::$outLoggedMessage){
-			$this->cookies->save(self::$messageCookie, $this->errorMessage);
+		if($this->userMessage != self::$outLoggedMessage){
+			$this->cookies->save(self::$messageCookie, $this->userMessage);
 		}
 		
-		return $userMessage;
+		return $this->userMessage;
 	}
 	
-	public function showLogin($message) {
-		$this->errorMessage = $this->setNewestErrorMessage($message);
+	public function showLogin() {
+		$userMessage = $this->setNewestUserMessage();
 		
 		$registerLink = $this->showRegister();
 				
@@ -99,7 +100,7 @@ class LoginView {
 						<fieldset>
 							<form method='post'>
 							<legend>Login - Skriv in användarnamn och lösenord</legend>
-							<p>$this->errorMessage</p> 
+							<p>$userMessage</p> 
 							<label for='UserID'>Användarnamn :</label>
 							<input id='UserID' name='userID' type='text' value=$this->username>
 							<label for='PasswordID'>Lösenord :</label>

@@ -7,14 +7,16 @@ class TimeView{
 	
 	function setTime(){
     setlocale(LC_ALL, "sv_SE");
+    
    
 	$day = $this->setDay(date('w'));
 	$date = strftime('%#d');
 	$month = $this->setMonth(date('m'));
 	$year = strftime('%Y');
-	$time = date('H:i:s');
+	$time = date('i:s');
+	$Hour = date('H') + 1; //Pga differens lokalt o på servern?
 	
-	$ret = $day . ', den ' . $date .' ' . $month . ' år ' . $year . '. Klockan är [' . $time . '].';
+	$ret = '<p>' . $day . ', den ' . $date .' ' . $month . ' år ' . $year . '. Klockan är [' .$Hour . ":" . $time . ']. </p>';
 	return $ret;
 	} 
 	

@@ -22,9 +22,7 @@ class LoginController {
 	private $userName;
 	private $sessionArray;
 	private $showRegisterOption = true; //Ändra till false så försvinner alternativet att kunna registrera sig
-	
-	//private $showRegisterLink;
-	
+		
 	//Meddelanden till användaren efter validering och händelser
 	private static $notCookieMessage = "Felaktig information i cookie";
 	private static $notValidMessage = "Felaktigt användarnamn eller lösenord";
@@ -40,16 +38,11 @@ class LoginController {
 	}
 
 	public function doLogin() {
-		//Ställ in om registrera-länk ska finnas
-		if($this->showRegisterOption === true){
-			$this->loginView->setShowRegisterLink();
-		}
-		
 		//Kontrollera om användaren är inloggad
 		if($this->checkIfUserIsLoggedIn()){
 			$this->isLoggedIn = FALSE;
 		}
-			///*$this->showRegisterOption === true && */	/*&& $this->registerSuccess === false*/
+			
 		//Kolla om användaren vill registrera ny användare
 		if($this->loginView->didUserPressCreateNew() === true && $this->showRegisterOption === true){
 			return $this->createUser->doRegister();
@@ -71,29 +64,25 @@ class LoginController {
 				}
 				else{
 					$this->textMessage = self::$notValidMessage;
-					return $this->loginView->showLogin($this->textMessage);
+					return $this->login();
 				}
 			}
 			else{
-				//$this->registerSuccess = false;
-				return $this->loginView->showLogin($this->textMessage);
+				return $this->login();
 			}
 		}
 		return $this->doLogout();
 	}
 	
-	private function didUserWantToRegister(){
-		//$createUserView = 
-		return $this->createUser->doRegister();
-			/*if(is_string($createUserView)){	
-				return $createUserView();
-			}
-			else{
-				$this->textMessage = $createUserView['message'];
-				$this->userName = $createUserView['name'];
-				$this->isLoggedIn = FALSE;
-				return $this->loginView->showLogin($this->textMessage);
-			}*/
+	private function login(){
+		if($this->textMessage != ""){
+			$this->loginView->setUserMessage($this->textMessage);
+		}
+		if($this->userName != ""){
+			$this->loginView->setUsername($this->userName);
+		}
+		$this->textMessage = "";
+		return $this->loginView->showLogin();
 	}
 	
 	private function setToLogout(){
@@ -104,6 +93,7 @@ class LoginController {
 		return false;
 	}
 	
+	//Funktionaliteten på logga-ut-sidan
 	private function doLogout(){
 		
 		while($this->isLoggedIn === TRUE){
@@ -113,13 +103,21 @@ class LoginController {
 				$this->textMessage = self::$outlogMessage;
 				$this->savedSession = false;
 				$this->isLoggedIn = FALSE;	
-					
-				return $this->loginView->showLogin($this->textMessage);						
+				
+				
+				return $this->login();						
 			}
-			return $this->logoutView->showLogout($this->textMessage, $this->userName);
+			return $this->logout();
 		}
 	}
-
+	
+	private function logout(){
+		$this->logoutView->setUsername($this->userName);
+		$this->logoutView->setUserMessage($this->textMessage);
+		$this->textMessage = "";
+		return $this->logoutView->showLogout();
+	}
+	
 	private function checkIfUserIsLoggedIn(){
 		$clientSession;
 		$userSession;
