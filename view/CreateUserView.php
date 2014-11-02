@@ -129,21 +129,21 @@ class CreateUserView {
 		if($message != ""){
 			$userMessage = $message;
 		}
-		if($this->errorMessage != ""){
+		elseif($this->errorMessage != ""){
 			$userMessage = $this->errorMessage;	
 		}
 		else{
 			$userMessage = $this->cookies->loadMessage(self::$messageCookie); 
 		}
+		//$this->cookies->save(self::$messageCookie, $userMessage);
 		
 		return $userMessage;
 	}
 	
-	//set newest errormsg = på tre vyer -> en gemensam???
 	public function showCreateUser($message) {
 		$this->errorMessage = $this->setNewestErrorMessage($message);
 		//if($this->errorMessage != self::$outLoggedMessage){
-			//$this->cookies->save(self::$messageCookie, $this->errorMessage);
+		
 		//}
 		
 		$ret = "<header>

@@ -16,6 +16,7 @@ class CreateUserController {
 	private $userMessage = "";
 	private $doRegister = false;
 	
+	private static $messageCookie = "Message";
 	private static $savedUserMessage = "Användaren är sparad";
 	private static $notSavedMessage = "Användaren kunde inte sparas - vänligen försök igen";
 	private static $allreadyTakenUsername = "Användarnamnet är redan upptaget";
@@ -31,6 +32,8 @@ class CreateUserController {
 	public function doRegister(){
 		//Kollar om användaren vill registrera sig. 
 		if($this->createUserView->didUserPressGoBack()){
+			$this->userMessage = "";
+			$this->cookies->remove(self::$messageCookie);
 			$this->doRegister = false;
 		}
 		else{
