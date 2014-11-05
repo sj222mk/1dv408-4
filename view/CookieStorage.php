@@ -3,39 +3,45 @@
 namespace view;
 
 class CookieStorage {
-	private static $userCookie = 'UserName';
-	private static $passWordCookie = 'PassWord';
+	private static $userCookie = 'Username';
+	private static $passwordCookie = 'Password';
 	private static $user = 'user';
-	private static $password = 'pw';
+	private static $password = 'password';
 	
 	public function save($name, $string) {
-		if(setcookie($name, $string, -1)){
+		$cookieTime = 60*2;	//Cookiers giltighetstid = 1 minut
+		
+		if(setcookie($name, $string, time() + $cookieTime)){
 			return true;
 		}
 		return false;
 	}
 	
-	public function saveUser($userData){
-		if (($this->save(self::$userCookie, $userData[self::$user])) 
-			&& ($this->save(self::$passWordCookie, md5($userData[self::$password])))
-		){
+	public function saveUsercookies($userData){
+		if (($this->save('Username', $userData[self::$user])) 
+			&& ($this->save('Password', password_hash($userData[self::$password], PASSWORD_BCRYPT)))
+		){								//md5($userData[self::$password])))
 			return true;
 		}
 		return false;
 	}
 	
-	public function checkUserCookie(){
-		if ((isset($_COOKIE[self::$userCookie])) && (isset($_COOKIE[self::$passWordCookie]))){
+	public function checkUserCookies(){
+		if ((isset($_COOKIE[self::$userCookie])) && ($_COOKIE[self::$userCookie] != "") &&
+			(isset($_COOKIE[self::$passwordCookie])) && ($_COOKIE[self::$passwordCookie] != "")){
 			return true;
 		}
 		return false;
 	}
 	
 	public function loadUserFromCookie(){
-		$data = "";	
+		$data = "";
 		
-		if (($_COOKIE[self::$userCookie] != "") && ($_COOKIE[self::$passWordCookie] != "")){
-			$data = $_COOKIE[self::$userCookie];
+		$user = $this->loadCookie(self::$userCookie);
+		$password = $this->loadCookie(self::$passwordCookie);
+		
+		if (($user != "") && ($password != "")){
+			$data = array('user' => $user, 'password' => $password);
 			}
 		else{
 			$data = false;
@@ -43,19 +49,18 @@ class CookieStorage {
 		return $data;
 	}
 	
-	public function removeUser(){
-		if(isset($_COOKIE[self::$userCookie]) && $_COOKIE[self::$userCookie] != ""){
-			setcookie(self::$userCookie, "", time() -10);
-			if(isset($_COOKIE[self::$passWordCookie]) && $_COOKIE[self::$passWordCookie] != ""){
-				setcookie(self::$passWordCookie, "", time() -10);			
-				return true;
-			}
+	public function removeUserCookies(){
+		try{
+			$this->remove(self::$userCookie);
+			$this->remove(self::$passwordCookie);
+			return true;
+		}
+		catch(exception $e){		
 			return false;
 		}
-		return false;
 	}
 	
-	public function loadMessage($name) {
+	public function loadCookie($name) {
 		if ((isset($_COOKIE[$name])) && ($_COOKIE[$name] != "")){
 			$ret = $_COOKIE[$name];
 		}

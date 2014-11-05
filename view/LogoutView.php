@@ -6,6 +6,7 @@ class LogoutView {
 	private $cookies;
 	private $userMessage = "";
 	private $username;
+	
 	private static $messageCookie = "Message";
 	
 	public function __construct(CookieStorage $cookies) {
@@ -21,17 +22,13 @@ class LogoutView {
 	}
 	
 	public function didUserPressLogout() {
-		if (isset($_POST["logout"]))
+		if (isset($_POST["logout"])){
 			return true;
-		
+		}
 		return false;
 	}
 	
-	
 	public function showLogout() {
-		$userMessage = $this->userMessage;
-		//$this->cookies->save(self::$messageCookie, $this->userMessage);
-
 		$ret = "<header>
 					<h2>$this->username är inloggad<h2> 
 				</header>
@@ -41,15 +38,5 @@ class LogoutView {
 				</form>";
 	
 		return $ret;
-		}
-	
-	private function setNewestMessage(){
-		$textMessage = "";
-		
-		if($this->userMessage === ""){
-			$this->userMessage = $this->cookies->loadMessage(self::$messageCookie);	
-		}
-		
-		return $textMessage;
 	}
 }

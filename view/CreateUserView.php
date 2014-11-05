@@ -141,7 +141,7 @@ class CreateUserView {
 	
 	private function setNewestUserMessage(){
 		if($this->userMessage === ""){
-			$this->userMessage = $this->cookies->loadMessage(self::$messageCookie); 
+			$this->userMessage = $this->cookies->loadCookie(self::$messageCookie); 
 		}
 		
 		return $this->userMessage;
@@ -164,8 +164,8 @@ class CreateUserView {
 					</article>
 					<article>
 						<fieldset>
-							<form method='post'>
 							<legend>Registrera ny användare - Skriv in användarnamn och lösenord</legend>
+							<form method='post'>
 							<p>$userMessage</p> 
 							<p><label for='UserID'>Namn :</label>
 							<input id='UserID' name='userID' type='text' value=$this->username></p>

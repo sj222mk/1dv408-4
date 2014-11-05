@@ -4,14 +4,17 @@ namespace view;
 
 class LoginView {
 	private $cookies;
+	private $showRegisterLink = true; //Visar länk för att registrera ny användare
 	private $userMessage = "";
-	private $showRegisterLink = true; 
-	private static $messageCookie = "Message";
 	private $username = "";
+	
 	private static $userID = 'userID';
 	private static $password = 'PasswordID'; 
-	private static $outLoggedMessage = "Du har nu loggat ut";
+	private static $messageCookie = "Message";
 	private static $register = "register";
+	
+	private static $outLoggedMessage = "Du har nu loggat ut";
+	
 	
 	public function __construct(CookieStorage $cookies) {
 		$this->cookies = $cookies;
@@ -60,7 +63,13 @@ class LoginView {
 	}
 	
 	public function getUserData(){
-		$data = array("user" => $_POST[self::$userID], "pw" => $_POST[self::$password]);
+		$user = $_POST[self::$userID];
+		$user = trim($user);
+		$password = $_POST[self::$password];
+		$password = trim($password);
+		
+		$data = array("user" => $user, "password" => $password);
+		
 		if ($data != ""){
 			return $data;
 		}	
@@ -75,9 +84,8 @@ class LoginView {
 	 
 	//Kontroll av mest aktuellt felmeddelande 
 	private function setNewestUserMessage(){
-		
 		if($this->userMessage === ""){
-			$this->userMessage = $this->cookies->loadMessage(self::$messageCookie);
+			$this->userMessage = $this->cookies->loadCookie(self::$messageCookie);
 		}
 		
 		if($this->userMessage != self::$outLoggedMessage){
@@ -93,21 +101,21 @@ class LoginView {
 		$registerLink = $this->showRegister();
 				
 		$ret = "<header>
-					<h2>Ej inloggad<h2> 
+					<h2>Ej inloggad</h2> 
 				</header>
 					$registerLink
 					<article>
 						<fieldset>
-							<form method='post'>
 							<legend>Login - Skriv in användarnamn och lösenord</legend>
+							<form method='post'>
 							<p>$userMessage</p> 
 							<label for='UserID'>Användarnamn :</label>
-							<input id='UserID' name='userID' type='text' value=$this->username>
+							<input autofocus id='UserID' name='userID' type='text' value=$this->username>
 							<label for='PasswordID'>Lösenord :</label>
 							<input id='PasswordID' name='PasswordID' type='password' value=''>
 							<label for='AutologinID'>Håll mig inloggad :</label>
 							<input id='AutologinID' name='AutologinID' type='checkbox'>
-							<button type='submit'name='login'>Logga in</button>
+							<button type='submit' name='login'>Logga in</button>
 							</form>
 						</fieldset>
 					</article>";

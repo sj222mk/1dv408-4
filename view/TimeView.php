@@ -7,7 +7,6 @@ class TimeView{
 	
 	function setTime(){
     setlocale(LC_ALL, "sv_SE");
-    
    
 	$day = $this->setDay(date('w'));
 	$date = strftime('%#d');
@@ -24,25 +23,25 @@ class TimeView{
 		switch($d){ 
         case '0': 
             $d = 'Söndag'; 
-        break; 
+        	break; 
         case '1': 
             $d = 'Måndag'; 
-        break; 
+        	break; 
         case '2': 
             $d = 'Tisdag'; 
 			break;
 		case '3': 
             $d = 'Onsdag'; 
-        break; 
+        	break; 
 		case '4': 
             $d = 'Torsdag'; 
-        break; 
+        	break; 
 		case '5': 
             $d = 'Fredag'; 
-        break; 
+        	break; 
 		case '6': 
             $d = 'Lördag'; 
-        break; 
+        	break; 
     	} 
 		
 		return $d;
@@ -52,40 +51,40 @@ class TimeView{
 		switch($m){ 
         case '1': 
             $m = 'Januari'; 
-        break; 
+        	break; 
         case '2': 
             $m = 'Februari'; 
-        break; 
+        	break; 
         case '3': 
             $m = 'Mars'; 
 			break;
 		case '4': 
             $m = 'April'; 
-        break; 
+        	break; 
 		case '5': 
             $m = 'Maj'; 
-        break; 
+        	break; 
 		case '6': 
             $m = 'Juni'; 
-        break; 
+        	break; 
 		case '7': 
             $m = 'Juli'; 
-        break; 
+        	break; 
 		case '8': 
             $m = 'Augusti'; 
 			break;
 		case '9': 
             $m = 'September'; 
-        break; 
+        	break; 
 		case '10': 
             $m = 'Oktober'; 
-        break; 
+        	break; 
 		case '11': 
             $m = 'November'; 
-        break; 
+        	break; 
 		case '12': 
             $m = 'December'; 
-        break; 
+        	break; 
     	} 
 		
 		return $m;
