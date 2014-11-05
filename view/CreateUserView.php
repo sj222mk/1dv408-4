@@ -22,6 +22,7 @@ class CreateUserView {
 	private static $userToManyMessage = "Användarnamnet har för många tecken. Max 20 tecken";
 	private static $passwordToFewMessage = "Lösenorden har för få tecken. Minst 6 tecken";
 	private static $passwordToManyMessage = "Lösenorden har för många tecken. Max 20 tecken";
+	private static $userHasInvalidCharacters = "Användarnamnet innehåller ogiltiga tecken";
 	
 		
 	public function __construct() {
@@ -37,11 +38,18 @@ class CreateUserView {
 	}
 	
 	public function didUserPressRegister(){
+		$strippedname;
 		if (isset($_POST["Register"])){
 			if($_POST[self::$userID] != ""){
 				$this->username = $_POST[self::$userID];
-				$this->trimInput($this->username);
+				$strippedName = strip_tags($this->username);
+				if($strippedName != $this->username){
+					$this->userMessage = self::$userHasInvalidCharacters;
+					$this->username = $strippedName;
+				}
+				else{
 				$this->userMessage = "";
+				}
 			}
 			else{
 				$this->userMessage = self::$noUserNameMessage;
@@ -62,11 +70,6 @@ class CreateUserView {
 			}
 		}
 	}
-	private function trimInput($string){
-		$string = strip_tags($string);
-		$string = trim($string);
-		return $string;
-	}
 	
 	public function didUserPressGoBack(){
 		if(key($_GET) === '?'){
@@ -80,7 +83,6 @@ class CreateUserView {
 		if($this->isUserCorrect() && $this->isPasswordCorrect()){
 			return $this->getUserData();
 			}
-		//$this->cookies->save(self::$messageCookie, $this->userMessage);
 		return false;
 	}
 	
@@ -150,36 +152,38 @@ class CreateUserView {
 	public function showCreateUser() {
 		$userMessage = $this->setNewestUserMessage();
 		
-		
-		//}
+		$user = "''";
+		if($this->username != ""){
+			$user = $this->username;
+		}
 		
 		$ret = "<header>
-					<h2>Ej inloggad<h2> 
+					<h2>Ej inloggad</h2> 
 				</header>
-				<main>
-					<article>
+				<article>
+					<form method='post'>
+						<p><a href='?'>Tillbaka</a></p>
+					</form>
+				</article>
+				<article>
+					<fieldset>
+						<legend>Registrera ny användare - Skriv in användarnamn och lösenord</legend>
 						<form method='post'>
-							<p><a href='?'>Tillbaka</a></p>
+						<p>$userMessage</p> 
+						<p><label for='UserID'>Namn : </label>
+						<input id='UserID' name='userID' type='text' value=$user></p>
+						<p><label for='PasswordID1'>Lösenord : </label>
+						<input id='PasswordID1' name='PasswordID1' type='password' value=''></p>
+						<p><label for='PasswordID2'>Repetera lösenord : </label>
+						<input id='PasswordID2' name='PasswordID2' type='password' value=''></p>
+						<p>Skicka :  
+						<button type='submit' name='Register'>Registrera</button></p>
+						
 						</form>
-					</article>
-					<article>
-						<fieldset>
-							<legend>Registrera ny användare - Skriv in användarnamn och lösenord</legend>
-							<form method='post'>
-							<p>$userMessage</p> 
-							<p><label for='UserID'>Namn :</label>
-							<input id='UserID' name='userID' type='text' value=$this->username></p>
-							<p><label for='PasswordID1'>Lösenord :</label>
-							<input id='PasswordID1' name='PasswordID1' type='password' value=''></p>
-							<p><label for='PasswordID2'>Repetera lösenord :</label>
-							<input id='PasswordID2' name='PasswordID2' type='password' value=''></p>
-							<label for='Register'>Skicka: </label>
-							<button type='submit'name='Register'>Registrera</button>
-							</form>
-						</fieldset>
-					</article>
-				</main>";
+					</fieldset>
+				</article>";
 		
 		return $ret;
-		}
+	}
 }
+
