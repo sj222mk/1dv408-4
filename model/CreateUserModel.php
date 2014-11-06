@@ -18,14 +18,14 @@ class CreateUserModel {
 	}
 	
 	public function ifExists($userData){
-		if(@file('Users/' . $userData[self::$username] . '.txt')){
+		if(@file('Members/' . $userData[self::$username] . '.txt')){
 			return true;
 		}
 		return false;		
 	}
 	
 	private function saveNewUser($userData){
-		$file = 'Users/' . $userData[self::$username] . '.txt';
+		$file = 'Members/' . $userData[self::$username] . '.txt';
 		$data = $userData[self::$password];
 		if(file_put_contents($file, $data) != FALSE){
 			return true;

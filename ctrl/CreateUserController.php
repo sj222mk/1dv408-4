@@ -62,7 +62,7 @@ class CreateUserController {
 			return $this->show();
 		}
 		
-		return $this->loginView->showLogin($this->userMessage);
+		return $this->login();
 	}
 	
 	private function show(){
@@ -84,6 +84,9 @@ class CreateUserController {
 			$this->loginView->setUsername($this->username);
 		}
 		$this->textMessage = "";
+		if($this->doRegister === false){
+			header('location: ' . $_SERVER['PHP_SELF']);
+		}
 		return $this->loginView->showLogin();
 	}
 	

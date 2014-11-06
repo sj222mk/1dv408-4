@@ -59,9 +59,6 @@ class LoginController {
 		if($this->showRegisterOption === true && $this->loginView->didUserPressCreateNew() === true){
 			return $this->createUser->doRegister();
 		}
-		/*else{
-			$this->isLoggedIn = FALSE;
-		}*/
 				
 		while($this->isLoggedIn === FALSE){
 		

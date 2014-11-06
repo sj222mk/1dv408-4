@@ -46,6 +46,7 @@ class CreateUserView {
 				if($strippedName != $this->username){
 					$this->userMessage = self::$userHasInvalidCharacters;
 					$this->username = $strippedName;
+					$this->username = trim($this->username);
 				}
 				else{
 				$this->userMessage = "";
@@ -128,13 +129,10 @@ class CreateUserView {
 	}
 	
 	private function getUserData(){
-		$user = $_POST[self::$userID];
-		$user = $this->trimInput($user);
-		
 		$pw = $_POST[self::$password1];
-		$pw = $this->trimInput($pw);
+		$pw = trim($pw);
 		
-		$data = array("user" => $user, "pw" => $pw);
+		$data = array("user" => $this->username, "pw" => $pw);
 		if ($data != ""){
 			return $data;
 		}	
