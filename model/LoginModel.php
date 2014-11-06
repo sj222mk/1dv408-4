@@ -99,7 +99,8 @@ class LoginModel {
 	//Sparar användare som vill bli ihågkommen
 	public function saveRememberedUserSession($userData, $serverSession){
 		$file = 'Sessions/' . $userData['user'] . 'session.txt';
-		$data = $serverSession['address'] . $serverSession['agent'] . "\n" . time() + self::$expireTime;
+		$time = time() + self::$expireTime;
+		$data = $serverSession['address'] . $serverSession['agent'] . "\n" . $time;
 		if(file_put_contents($file, $data) != FALSE){
 			return true;
 		}
