@@ -7,8 +7,6 @@ class ServerStorage {
 	private $time;
 	private $agent;
 	
-	//constructor här??
-	
 	public function getUserServerSettings(){
 		$this->address = $_SERVER['REMOTE_ADDR'];
 		$this->agent = $_SERVER['HTTP_USER_AGENT'];

@@ -8,8 +8,13 @@ class CookieStorage {
 	private static $user = 'user';
 	private static $password = 'password';
 	
+	public function getSessid(){
+		$cookie = session_id();
+		return $cookie;
+	}
+	
 	public function save($name, $string) {
-		$cookieTime = 60*2;	//Cookiers giltighetstid = 1 minut
+		$cookieTime = 3600;	//Cookiers giltighetstid = 1h
 		
 		if(setcookie($name, $string, time() + $cookieTime)){
 			return true;
@@ -20,7 +25,7 @@ class CookieStorage {
 	public function saveUsercookies($userData){
 		if (($this->save('Username', $userData[self::$user])) 
 			&& ($this->save('Password', password_hash($userData[self::$password], PASSWORD_BCRYPT)))
-		){								//md5($userData[self::$password])))
+		){								
 			return true;
 		}
 		return false;

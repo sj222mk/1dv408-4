@@ -72,7 +72,7 @@ class CreateUserController {
 		if($this->username != ""){
 			$this->createUserView->setUsername($this->userName);
 		}
-		$this->textMessage = "";
+		$this->userMessage = "";
 		return $this->createUserView->showCreateUser($this->userMessage);
 	}
 	
@@ -83,7 +83,6 @@ class CreateUserController {
 		if($this->username != ""){
 			$this->loginView->setUsername($this->username);
 		}
-		$this->textMessage = "";
 		if($this->doRegister === false){
 			header('location: ' . $_SERVER['PHP_SELF']);
 		}

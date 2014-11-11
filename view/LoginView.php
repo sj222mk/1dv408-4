@@ -14,6 +14,8 @@ class LoginView {
 	private static $register = "register";
 	
 	private static $outLoggedMessage = "Du har nu loggat ut";
+	private static $savedUserMessage = "Användaren är sparad";
+	private static $notSavedMessage = "Användaren kunde inte sparas - vänligen försök igen";
 	
 	
 	public function __construct(CookieStorage $cookies) {
@@ -90,6 +92,10 @@ class LoginView {
 		
 		if($this->userMessage != self::$outLoggedMessage){
 			$this->cookies->save(self::$messageCookie, $this->userMessage);
+		}
+		
+		if($this->userMessage === self::$savedUserMessage || $this->userMessage === self::$notSavedMessage){
+			$this->cookies->remove(self::$messageCookie);
 		}
 		
 		return $this->userMessage;

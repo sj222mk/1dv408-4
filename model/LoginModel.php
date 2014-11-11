@@ -71,7 +71,7 @@ class LoginModel {
 	}
 	
 	//Kollar om användaren tidigare bett om att hållas inloggad
-	public function verifyRememberedClient($clientArray, $clientSession){
+	public function verifyRememberedClient($clientArray, $clientSession, $sessID){
 		$rememberedUserArray;
 		$currentClientString;
 		$memberData;
@@ -84,23 +84,27 @@ class LoginModel {
 				if($rememberedUserArray != false && $rememberedUserArray != ""){
 					$currentClientString = $clientSession['address'] . $clientSession['agent'] . "\n";
 					if($rememberedUserArray[0] === $currentClientString && $rememberedUserArray[1] > time()){
-						return $user;	
+						if($sessID != $rememberedUserArray[2]){
+							return array('user' => $user, 'session' => "new");
+						}	
+						else{
+							return array('user' => $user, 'session' => "old");
+						}
 					}
 				}
 			}
 			else{//Tar bort sparad användare då uppgifterna inte är giltiga längre
 				$this->removeRememberedUserSession($user); 
 			}
-			
 		}
 		return false;
 	}
 	
 	//Sparar användare som vill bli ihågkommen
-	public function saveRememberedUserSession($userData, $serverSession){
+	public function saveRememberedUserSession($userData, $serverSession, $sessID){
 		$file = 'Sessions/' . $userData['user'] . 'session.txt';
 		$time = time() + self::$expireTime;
-		$data = $serverSession['address'] . $serverSession['agent'] . "\n" . $time;
+		$data = $serverSession['address'] . $serverSession['agent'] . "\n" . $time . "\n" . $sessID;
 		if(file_put_contents($file, $data) != FALSE){
 			return true;
 		}
@@ -135,7 +139,7 @@ class LoginModel {
 		$data = "";
 		
 		if(isset($_SESSION['agent']) && isset($_SESSION['address']) && isset($_SESSION['username'])){
-			$data = array('agent' => $_SESSION['agent'], 'address' => $_SESSION['address'], 'user' => $_SESSION['username']);
+			$data = array('agent' => $_SESSION['agent'], 'address' => $_SESSION['address'], 'user' => $_SESSION['user']);
 		}
 		return $data;
 	}
@@ -144,7 +148,6 @@ class LoginModel {
 	public function saveUserSession($userData, $serverData){
 		try{
 			$_SESSION['user'] = $userData['user'];
-			$_SESSION['password'] = $userData['password'];
 			$_SESSION['address'] = $serverData['address'];
 			$_SESSION['agent'] = $serverData['agent'];
 			return true;
@@ -160,9 +163,6 @@ class LoginModel {
 			if(isset($_SESSION['user'])){
 				session_unset('user'); 	
 			}
-			if(isset($_SESSION['password'])){
-				session_unset('password');
-			}
 			if(isset($_SESSION['address'])){
 				session_unset('address');
 			}
@@ -170,9 +170,6 @@ class LoginModel {
 				session_unset('agent');
 			}
 			return true;
-			//$_SESSION = array(); //Nollställer värden
-			//session_destroy(); //Förstör sparad session
-			//return true;
 		}
 		catch(Exception $e){
 			return false;
